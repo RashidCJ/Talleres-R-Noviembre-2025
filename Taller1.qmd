@@ -1,0 +1,888 @@
+---
+title: "CACCS: Taller de RStudio - 1ª parte"
+author: "Rashid C.J. Marcano Rivera, Ph.D., M.S., M.A."
+date: "13 de nov.ᵉ de 2025"
+
+format:
+  html:
+    theme: cerulean
+    toc: true
+    toc-location: left
+    number-sections: true
+    toc-expand: true
+    highlight-style: monokai
+    code-fold: false
+    code-tools: true
+editor: visual
+# Para cuando añadas bibliografía:
+# bibliography: "Referencias.bib"
+# csl: "apa.csl"
+# reference-location: section
+---
+
+# Introducción
+
+**Introducción a la computación estadística en R**
+
+Este taller está basado en notas de Paul Thibodeau y revisiones de profesores del departamento de psicología de BYU [(vea esa versión aquí)](https://fhssrsc.byu.edu/r-workshop). Adaptado al español y usando ejemplos del libro de Rafael Irizarry [disponible aquí](https://leanpub.com/dslibro). Ha sido revisado de la primeras versión de este taller, brindadas en el Centro Académico de Cómputos de Ciencias Sociales en los pasados semestres.
+
+*Si aún no has instalado R, está disponible [aquí](http://cran.us.r-project.org/). Acto seguido, [baja RStudio](https://posit.co/download/rstudio-desktop/). Puedes también ir a la nube [en Posit Cloud](https://posit.cloud/).*
+
+# Sobre aprender R
+
+R es un lenguaje creado por estadísticos como ambiente interactivo para análisis de datos. En R pueden guardar su trabajo como una secuencia de comandos, conocida como un *script*, que se pueden ejecutar fácilmente en cualquier momento, con portabilidad. Estos *scripts* sirven como un registro del análisis que realizaron, una característica clave que facilita el trabajo [***reproducible***]{.underline}. Si bien es un programa poderoso y flexible, es ciertamente más complicado que programados como el que puedan encontrar en SPSS o STATA, donde pueden señalar con el ratón una opción y ejecutarla. Por otro lado, R es gratuito y de código abierto. En adición es modular y las funcionalidades añadidas complementariamente por terceros también son gratuitos, incluyendo acceso temprano a los métodos y herramientas más recientes que se desarrollan para una amplia variedad de disciplinas, incluyendo la economía, ciencias políticas, sociología, planificación, ecología, geografía o la biología molecular, entre otros.
+
+Mi idea tras esta secuencia de talleres sobre R es brindar una introducción para que puedan interactuar con R tal que los sentimientos de frustración o ansiedad que puedan surgir al trabajar con este lenguaje al usarlo en variedad de circunstancias. Este taller presume en general ciertos conocimientos básicos en estadística, pero abundará en cada parte que se trabaje aunque sea algo como la motivación para las funciones que ejecutaremos. Si no tienen experiencia en programación computacional, es posible que partes de este taller resulten confusas o no tengan mucho sentido. Recomiendo que aún así traten de entender lo que puedan, y luego al volver a este taller periódicamente al repasar el contenido, vayan comprendiendo (o trayendo preguntas que no se resuelvan) el material.
+
+Es importante que sepan que la habilidad más útil de antemano es la de saber adónde ir cuando se atasquen. R ayuda bastante en esto. La consola de R, al escribir y ejecutar comandos, brinda retroalimentación inmediata. Hagan uso de esto de manera liberal mientras trabajan el taller, haciendo pequeñas modificaciones a los ejemplos que brinde, hasta que sientan que entienden qué está ocurriendo.
+
+De una vez, cabe señalar que la consola brinda acceso a la función de buscar ayuda interna. Casi todas las funciones (y muchos de los datos pre-almacenados) tienen archivos que les acompañan describiendo qué son las funciones, y cómo usarlas. Pueden acceder a esta información escribiendo `help(función)` (o `?función`), sustituyendo «función» por el nombre de la función que quieras conocer. Es importante leer estos archivos detenidamente la primera vez que te encuentres con una función, pero *también* (posiblemente más) importante es consultarlos con frecuencia. Si tienes una idea de qué quieres hacer, pero no sabes ni recuerdas la función exacta para esto, puedes buscar en los archivos por el término usando doble signo de interrogación (`??regression`).
+
+Hay mucha información adicional en internet. Es difícil buscar en Google por R, ya que es una letra, pero sí se puede encontrar mucho sobre funcionalidades. Para búsqueda más certera se puede ir a [StackOverflow](http://stackoverflow.com/), y buscar el tag de R (`[R]`) junto a tu pregunta o error. Relacionado está el [StackExchange de estadísticas](http://stats.stackexchange.com/), que es como Stack Overflow pero enfocado en la madeja estadística.
+
+Finalmente, antes de empezar, quiero hablar sobre errores. Tanto novatos como expertos encontrarán errores en su código de R. De suceder, al ir ejecutando un *script* o trabajo, cesará el proceso y saldrá impreso un mensaje de error en la consola. Esto puede ser frustrante, en especial al estar iniciando el aprendizaje, pues el error ocurre a menudo muy adentro de las especificidades de una función, y el mensaje de error no guarda relación con lo que el usuario quería hacer. Un error a evitar al empezar a aprender R es que el error es un disparate incomprensible, y resignarse a la frustración y desánimo. Resistan ese impulso; si bien el mensaje no será de inicio informativo, está diseñado para transmitir cierta información con claridad, y entender esa información es clave para resolver el problema (o cambiar de estrategias).
+
+Esta es una secuencia de dos talleres, y en esta lección arrancaremos con lo básico de R, RStudio y el tidyverse, y tenemos la meta hoy de que al culminar las primeras dos horas de esta secuencia podamos:
+
+1.  Entender la lógica de RStudio.
+
+2.  Importar, crear, leer y manipular datos y objetos.
+
+3.  Inicios de la visualización y análisis descriptivo.
+
+En el siguiente taller expandiremos sobre esta base, y profundizaremos en visualización avanzada, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales, así como de los distintos métodos de verificación de presunciones de modelo. Si bien hay mucho más que se puede hacer con R (e.g. *machine learning*, extracción de datos de la web, procesamiento de cadenas y minería de textos, análisis de redes, presentaciones estilo powerpoint, interacción con Git, trabajos en Unix, etc.), la idea es iniciar la travesía en R, y señalar a dónde pueden buscar ahondar.
+
+## Usando RStudio (y presentando por encima, Quarto)
+
+¿Cómo difieren R y RStudio? RStudio es una interfaz que yace encima del programa base R. Es además [**mucho**]{.underline} más amigable y llevadera que R.
+
+![Consola R: ejecuta comandos a la medida que se escriben.](R.png)
+
+R, por su cuenta es una consola sencilla donde teclean y corren código.
+
+![RStudio con varios paneles, incluyendo la consola inicial de R (abajo a la izquierda).](RStudioPanes.jpeg)
+
+RStudio tiene la *Consola* como panel, pero tiene otros paneles en adición que nos ayudan a ubicarnos, como *Environment* (Ambiente) - para que vean los objetos (conjuntos de datos y variables, o funciones) que hayan guardado o creado a través de la sesión *-* el de *Output* (Salida) - donde pueden ver sus archivos en el directorio, sus gráficos, acceder los paquetes y buscar ayuda - y *Source* (Fuente), donde pueden crear y editar tanto archivos o *scripts* de R, como de Markdown, [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html) y [Shiny](https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/index.html) (para dashboards), entre otros formatos.
+
+Estos paneles (y otras configuraciones) son editables, como el caso del R que manejo en mi Mac:
+
+![Otra forma posible de configuración.](RStudio.png)
+
+A grosso modo, RMarkdown/Quarto es un tipo de documento que permite la escritura de texto regular junto a secciones o pedazos de R. Esto es útil para explicar por ejemplo tu código, seguido por el código mismo para uso regular. También es útil porque Markdown/Quarto se puede exportar como una página html así como un PDF, o Word lo cual es útil para compartirlo fuera del esquema de R. Si les interesara más sobre RMarkdown, visiten esta [página](https://rmarkdown.rstudio.com/lesson-1.html) o esta para Quarto [aquí](https://quarto.org/docs/get-started/hello/rstudio.html).
+
+# Interacción con la consola de R
+
+```{r paquetes que instalar luego}
+#install.packages("dslabs","wooldridge","tidyverse") #Si ya están instalados, comenten con '#' para desactivar esta línea
+```
+
+En la forma básica, R es una calculadora para cómputos básicos. Escribe en R (o en un trozo o **chunk** en RMarkdown o Quarto) y el resultado saldrá en la consola al ejecutar o correrlo. Un **chunk** se designa en Markdown con triple \` al inicio y fin, así como {r título de sección}. Ahí va el código. Hoy nos enfocaremos en R, pero esta presentación se hizo en RMarkdown. Pueden correr líneas de su secuencia de códigos al usar Command+Return en Mac, o Control+Enter en la PC. También hay un botón para correr líneas o secciones enteras, así como el *script* entero.
+
+```{r calculadora básica}
+1 + 2
+13 / 2
+2 ^ 6
+5 * (2 + 3)
+sqrt(81)
+```
+
+## Asignando valores a objetos
+
+Claro, R es mucho más que una calculadora básica. La computación con R incluye asignar valores a objetos, y esto se puede hacer con dos maneras básicamente equivalentes:
+
+```{r creando un objeto}
+x = 4
+x <- 4
+```
+
+En ambos casos, `x` representará `4` y R guardará ese significado para las líneas subsiguientes, a menos que reasignes el valor de `x`.
+
+```{r alterando valor de objeto}
+x
+x + 2
+x = 8
+x
+```
+
+Vale señalar que no se debe confundir la asignación de valor a un objeto (o variable) como una igualdad. Al pensar lo que vimos, debiéramos pensar que *asignamos 4 a x* o *x recibe 4* o *x tiene 4*, mas no *x es igual a 4*. Aunque `=` es consistente con otros lenguajes de programación, muchos preferimos `<-` al hacer la acción tomada a cabo más evidente. Si tenían curiosidad, se prueba la igualdad con doble signo de igualdad (`==`), y eso produce algo distinto:
+
+```{r equality_tests}
+2 == 2
+2 == 3
+```
+
+Está bien usar nombres de variables como `x` para ejemplos matemáticos simples como los anteriores. Sin embargo, cuando escribas código para realizar análisis, debes tener cuidado de usar nombres descriptivos. El código donde las cosas se llaman `id_sujeto`, `condición` o `edad` serán más largos que `x`, `y` y `z`, pero tendrán **mucho** más sentido al volver a ellos meses después al hacer sus artículos o trabajos de investigación. Hay, eso sí, ciertas reglas para nombres: pueden ser cualquier carácter alfanumérico, pero el primer carácter ha de ser una letra. No se permiten espacios: la computadora no entiende que quieres trabajar con dos palabras como si fuera un concepto; son dos términos separados. En ese caso considera unir palabras con `_` y `.`. R también puede trabajar con datos categóricos, no sólo numéricos:
+
+```{r asignando valores categóricos}
+y<-"Puerto Rico"
+y
+```
+
+Noten las comillas. ¿Qué pasa si no llevara comillas?
+
+También podemos asignar valores lógicos como cierto, `TRUE` y falso, `FALSE`:
+
+```{r valores lógicos}
+alive <- TRUE
+asleep <- FALSE
+```
+
+Pueden comparar también valores numéricos con \>, \<, !=, \<= y \>=, que devolverán valores lógicos `TRUE` o `FALSE`.
+
+```{r}
+2 < 3
+3 <= 3
+3 != 4 #-> noten: el símbolo complejo "!=" significa "no es igual a".
+```
+
+Una vez hayan asignado valor numérico a objetos o variables, podrán hacer cálculos:
+
+```{r}
+psic <- 2
+soci <- 1
+econ <- 2
+cipo <- 2
+antr <- 1
+geog <- 2
+otro_cs <- 1
+otras_f <- 0
+
+taller_n = psic + soci + econ + cipo + antr + geog + otro_cs + otras_f
+
+print(paste0("La cantidad de participantes en el taller hoy es ",taller_n, ".")) # cantidad de participantes del taller
+```
+
+## Funciones
+
+Las **funciones** en R son útiles para operaciones complejas. Toman en sí insumos de *argumentos* o *parámetros*, hacen su operación y devuelven unas salidas o resultados. Ustedes *llaman* a la función al escribir el nombre seguido de paréntesis, con los argumentos necesarios. Por ejemplo `print()` y `paste0` arriba. También podemos crear funciones propias:
+
+```{r creando una función}
+mediana_mín_máx <- function(x){
+  qs <- quantile(x, c(0.5, 0, 1))
+  data.frame(mediana = qs[1], mín = qs[2], máx = qs[3])
+}
+```
+
+Hay varias funciones en R básico que son útiles en matemáticas:
+
+```{r funciones de matemáticas}
+abs(-4)
+sqrt(64)
+log(1.75)
+```
+
+Normalmente usaremos `c()`, la función de concatenación. Esta toma una secuencia de argumentos y la encadena en un **vector**. La mayoría de las funciones de estadísticas descriptivas esperan recibir al menos un vector, o algo similar a ello.
+
+```{r vectores básicos}
+a <- c(2, 5, 7)
+print(a)
+#mediana_mín_máx(a)
+cat(a)#, fill = T) #concatena e imprime, menos complejo que print al no dar line feeds a menos que se explicite fill=T como argumento.
+sum(a) #suma
+mean(a) #media
+sd(a) #desviación estándar
+var(a)
+```
+
+# Importando datos
+
+Al recolectar datos en nuestros estudios, o al recibir datos pre-existentes de archivos estadísticos, es probable que nos encontremos con un archivo .csv, donde cada fila tenga la respuesta de un participante o un país, y una columna represente una variable, concepto o pregunta. Queremos importar esto a R para manipular estos datos (renombrarlos, crear nuevas variables de las existentes, fusionar conjuntos de datos que tengan puntos en común) y generar posiblemente estadísticas que resuman la información, así como analizar y visualizar las tendencias halladas.
+
+```{r importando archivos .csv}
+#install.packages("tidyverse")
+library(tidyverse)
+
+# escribiendo un csv
+#write_csv(mtcars, "mtcars.csv")
+
+# load a csv file
+d <- read_csv("mtcars.csv")
+
+```
+
+Esta importación es sencilla también con Stata o SPSS usando el paquete `haven`:
+
+```{r DTA y SAV}
+library(haven)
+
+haven::write_dta(mtcars, "mtcars.dta")
+d2 <- haven::read_dta("mtcars.dta")
+
+haven::write_sav(mtcars, "mtcars.sav")
+d3 <- haven::read_sav("mtcars.sav")
+```
+
+Una vez hayan importado los datos es probable que quieran echarle un vistazo a los datos, asegurarse que todo entró adecuadamente:
+
+```{r echando un vistazo}
+#mira los nombres de las variables
+names(d)
+#recoge los datos básicos de las variables en el conjunto (e.g. observaciones, datos ausentes, mínimo, máximo, media)
+summary(d)
+#las primeras filas
+head(d)
+#las últimas filas
+tail(d)
+#los tipos de variable
+str(d)
+```
+
+Recuerden que para datos pre-existentes en R o paquetes, pueden buscar más información sobre los datos al poner `?[nombredatos]` en la consola. `mtcars` es uno de estos, así que podríamos ir a verificar en la pestaña de ayuda sobre los datos y el significado de estos.
+
+```{r}
+help(mtcars)
+```
+
+## Tipos de datos
+
+Hay cuatro tipos de datos en R. Sabiendo de ellos podemos entender lsa limitaciones de análisis de cada uno, y también podrán entender mejor algunos errores que podrían recibir. Estos son:
+
+1.  Numéricos (números, enteros, dobles (aceptan los decimales))
+2.  Caracterers (strings)
+3.  Lógicos (C/F)
+4.  Factores (niveles discretos; e.g., categorías)
+
+Si ponemos la función `str(d)` notarán que cada variable tiene una asignatura de tipo. Pueden cambiar el tipo de datos, por ejemplo hacia categórico usando la función `as.factor()`. Ejemplo:
+
+```{r}
+str(d)
+```
+
+```{r}
+d$am <- as.factor(d$am)
+str(d$am)
+```
+
+En estos datos `am` nos informa si el vehículo usa transmisión automática (0) o manual (1). Estas son categorías en realidad, representadas por una variable dummy, pues es mejor reclasificarlas de ser números continuos a categorías: al usar `as.factor()` le dijimos a R que `am` era un factor. Puedes verificar manualmente el estado o transformación de una variable al usar `str(nombre_de_variable)`.
+
+## El operador de accesso `$`
+
+A menudo queremos no entender todos los datos (pueden ser muchos) sino entender algunas variables en específico. Podemos usar un código que permite acceder a la variable dentro de un objeto: `datos$nombre_var`--el conjunto de datos, un signo de peso o dólar, y el nombre de la variable. Por ejemplo, `d$cyl` es decirle a R **"dentro del conjunto de datos `d`, la variable `cyl`"**. Es importante en este punto especificar el conjunto que queremos acceder, pues tenemos varias opciones.
+
+### Apegándonos de un conjunto de datos
+
+Es posible que quieran trabajar con sólo uno o mayormente uno de estos conjuntos de datos. Ahí podríamos usar la opción de `attach(datos)` mientras operas con esos datos, y luego `detach()` al terminar con ellos. En este caso, le decimos a R que asuma que al llamar la variable, nos referimos a los datos que 'pegamos' a la memoria.
+
+*Si bien esto puede ser conveniente, podría llevar a ciertos errores por olvido o por cambios en los datos, debe ser usado sin mucha frecuencia.*
+
+Aquí 'pegamos' ese conjunto de datos y hacemos una operación con la variable de automático o manual `am`:
+
+```{r df pegado}
+attach(d)
+
+am <- as.integer(am)
+str(am)
+mean(am)
+sd(am)
+range(am)
+am <- as.factor(am)
+str(am)
+#sd(am) #dará error: no se puede aplicar esto a valores categóricos
+```
+
+Si optaron por usar la función de `attach`, ¡asegúrense de 'despegar' el conjunto de datos al terminar las operaciones que iban a usar!
+
+```{r despegando el df}
+detach(d)
+```
+
+### Verificando las variables
+
+Ahora que podemos acceder a las variables, podemos explorarlas con varias funciones existentes en R y paquetes adicionales. También podríamos crear nuestras propias funciones. Abajo algunas:
+
+```{r}
+tapply(d$mpg, d$gear, mean) #Promedio de millas por galón (mpg) según la cantidad de cambios (3, 4 o 5)
+
+sapply(d, mean) #Promedio de cada variable del conjunto
+
+summary(d$mpg) #Estadísticas resumidas básicas
+
+table(d$carb, d$am) #Tabla de frecuencias
+addmargins(table(d$carb, d$am, dnn=c('núm. de carburadores','transmisión'))) #Añade totales por fila y columna
+
+# Visualizando la distribución
+hist(d$wt, col = 'red3', xlab = NA, main = 'Distribución del peso')
+boxplot(d$wt, ylab = 'Peso (en miles)')
+plot(d$wt~d$mpg,xlab="Millas por galón",ylab='Peso (en miles)')
+```
+
+Nota que para estas funciones lo que se *requiere* en realidad es el nombre de la variable como argumento. ¿Qué creen signifiquen las opciones `col =`, `xlab =`, `main =`, y `ylab =`?
+
+Podríamos también agrupar la información como ocurre en estos casos abajo del paquete `psych`.
+
+```{r psych, paquete que añade más descripción}
+#install.packages("psych")
+library(psych)
+describe(d$hp) # la función "describe" viene en el paquete de psych; da datos adicionales
+describeBy(d$mpg, d$am) # del paquete "psych"
+```
+
+Una forma más complicada pero útil de verificar estadísticas es la función `xtabs()`, es decir tabulación cruzada. El código pide una fórmula que contraste las variables. El código es un poco más complicado pero se puede interpretar como "la suma de `mpg`, para cada grupo de `cyl` y `am`". Ya que `cyl` tiene tres grupos y `am` tiene dos grupos, `xtabs()` devuelve una tabla de seis celdas con las sumas de `mpg` para cada uno de estos grupos; así podríamos por ejemplo verificar como cambian las medias dadas ciertas categorías. Noten que hemos usado, sin `attach()` el nombre de las variables, ya que le dijimos a la función que se enfocara en las variables dentro del objeto definido en la opción `data = conjunto_de_datos` (aquí, *data* = d).
+
+```{r}
+xtabs(mpg ~ cyl + am, data = d)
+```
+
+Si queríamos el promedio de millas por galón por categoría hacemos lo siguiente:
+
+```{r}
+# Sumamos mpg por categorías de cyl y am
+suma_mpg <- xtabs(mpg ~ cyl + am, data = d)
+
+# Sacamos la cantidad de observaciones por categorías de cyl y am obviando el lado izquierdo de la fórmula
+cantidad <- xtabs(~ cyl + am, data = d)
+
+# Media de mpg por categorías de cyl y am
+media_mpg <- suma_mpg / cantidad
+
+media_mpg
+```
+
+En este caso hemos obtenido la media de millas por galón según la cantidad de cilindros del vehículo, y si la transmisión era manual o automática.
+
+# Entendiendo y manipulando datos: Tidyverse
+
+Si bien podríamos usar esta información previa para entender los datos. Digamos que queremos saber qué carro es el mejor en estos datos en cuestión de millas por galón. Podríamos hacer:
+
+```{r Encontrando máximos y mínimos}
+library(ggplot2)
+data("mpg")
+?mpg
+summary(mpg)
+max(mpg$hwy) #sin embargo esto no nos lleva a mucha más información
+i_max<-which.max(mpg$hwy)
+mpg$model[i_max]
+```
+
+El vehículo con mejor millaje por galón fue el Jetta. Igualmente si trabajamos datos de criminalidad en EEUU, podríamos tener
+
+```{r}
+library(dslabs)
+data(murders)
+summary(murders)
+min(murders$total) #queremos igual aquí saber el estado que menos tuvo
+i_min<-which.min(murders$total)
+murders$state[i_min]
+```
+
+Y tendríamos este resultado, con Vermont como el que menos asesinatos de arma de fuego registrara en 2010.
+
+Sin embargo esto no es suficiente quizás para todo lo que queremos hacer y se ve demasiado laborioso o largo en relación a lo que obtenemos. En el caso de los datos de asesinatos por arma de fuego, hemos buscado el estado con menos asesinatos, y vemos que hay un rango enorme entre ése y el mayor, pero ¿estamos comparando chinas con chinas?
+
+## Modificando conjuntos de datos: creando una variable
+
+Podríamos crear una tasa de asesinatos para este último conjunto de datos, con la información ya suministrada.
+
+```{r Crear una variable}
+murders$tasa_100k<-murders$total/murders$population *10^5
+head(murders)
+#en tidyverse esto se puede hacer con la función mutate()
+murders<-mutate(murders,tasa=total/population*10^5)
+head(murders)
+```
+
+Digamos que ahora queremos ver una lista más informativa e intuitiva de los datos; por ejemplo, qué otros carros figuran con buen millaje por galón:
+
+```{r}
+filter(mpg, hwy>=35) 
+```
+
+En este caso hemos seleccionado las filas para visualizar que tienen millaje por galón superior a 35: hemos creado un **subconjunto**.
+
+## El operador pipe `%>%` o `|>`
+
+Digamos que realmente queremos reducir la cantidad de columnas en las que queremos enfocarnos, pues los datos de `mpg` tienen demasiadas. Podríamos crear otro subconjunto:
+
+```{r select}
+tabla_nueva_mpg<-select(mpg,model,year,cty,hwy)
+filter(tabla_nueva_mpg, hwy>=35) 
+```
+
+Y nos quedamos con cuatro columnas dándonos información puntual si esto era lo que nos interesaba. Sin embargo, podríamos evitarnos la creación de objetos intermedios al usar la función que canaliza los datos en secuencia funcional así:
+
+```{r}
+mpg %>% select(model,year,cty,hwy) |> filter(hwy>=35)
+```
+
+*Vale la pena señalar que el* pipe *funcionará bien con las funciones donde el primer argumento sean los datos de entrada, que canalizamos. Las funciones de tidyr y dplyr operan así y se acoplan al* pipe*.*
+
+## Resumiendo datos explorativamente con Tidy
+
+En esta sección cubriremos dos funciones de tidyverse, en dplyr, `summarise` y `group_by`. La primera, `summarise`, ofrece el cálculo de estadísticas de resumen con un código legible e intuitivo. El segundo agrupa y resume los datos por categorías inherente en las variables existentes. Por ejemplo, quizás quisiéramos calcular el promedio y desviación estándar de los vehículos en los datos de millaje por galón, pero queremos agruparlos por fabricante, o tipo de transmisión, o cualquier otro tipo de variable:
+
+```{r}
+mpg %>%
+  group_by(manufacturer) |>
+  summarise(mpg_grupal=mean(hwy),
+            ds_grupal=sd(hwy)) #por fabricador
+
+mpg |>
+  group_by(trans) |>
+  summarise(mpg_grupal=mean(hwy),
+            ds_grupal=sd(hwy)) #por año de manufactura
+```
+
+Podemos también aplicar una función creada previamente:
+
+```{r}
+mpg |> group_by(manufacturer) |> summarise(mediana_mín_máx(hwy))
+```
+
+Digamos que queremos obtener las tasas medias de regiones específicas en los EEUU. En este caso entra más complicación pero en Tidyverse podemos usar tanto el pipe `%>%` como la `%in%` (el %in% es una función que busca parear la entrada de un valor mapeado en otro):
+
+```{r}
+murders %>%
+  mutate(group = case_when(
+    abb %in% c("ME", "NH", "VT", "MA", "RI", "CT") ~ "Nueva Inglaterra",
+    abb %in% c("WA", "OR", "CA") ~ "Costa del Pacífico",
+    region == "South" ~ "el Sur",
+    TRUE ~ "Otras regiones")) %>%
+  group_by(group) %>%
+  summarise(tasa_100k = sum(total)/ sum(population) * 10^5)
+```
+
+# Visualización de datos: porqués
+
+Ver números y cadenas de caracteres que forman un conjunto de datos puede ser interesante, o no, pero normalmente no tiene tanta utilidad. Por ejemplo:
+
+```{r Cargando datos de Wooldridge}
+library(wooldridge)
+
+data(wage1)
+head(wage1)
+
+```
+
+¿Qué aprendemos de ver estos datos así? ¿Podemos rápidamente determinar a si años de educación se traducen a mayores ingresos? ¿Podemos determinar si afecta en algo la relación marital? Para muchos humanos, es difícil extraer información con meramente mirar a números sin contexto adicional. Pero podríamos ver algo en este gráfico
+
+![Meta 1.ª: datos de ingreso, que continuaremos al abundar en modelos inferenciales el miércoles que viene.](Relación.png)
+
+Lo mismo podríamos hacer con los datos que trabajamos la semana pasada de homicidios con armas de fuego en EEUU:
+
+```{r}
+library(dslabs)
+library(tidyverse)
+data("murders")
+tail(murders)
+```
+
+No podemos determinar con facilidad a qué estado le toca la población más grande o pequeña, y si existe alguna relación entre el tamaño de población y el total de asesinatos, o de cómo varían las tasas de asesinatos por regiones de estados en la federación estadounidense. Sin embargo, eso puede responderse sin muchas palabras con el próximo gráfico.
+
+![Gráfico de la meta 2.ª](Meta.png)
+
+Una imagen vale más que mil palabras dice el dicho. Sin adentrarnos a la inferencia estadística (que cubriremos en la tercera semana de esta secuencia de talleres), hemos podido comunicar relaciones y hallazgos en datos. A veces puede ser este ejercicio uno tan convincente que no requiera análisis subsiguientes.
+
+Vivimos en una era de creciente disponibilidad de conjuntos de datos informativos y de herramientas de software, con lo cual el uso de visualizaciones ha aumentado en diversos espacios: académicos, gubernamentales, organizaciones sociales, prensa, e industrias varias.
+
+En R, una de las principales maneras con la que trabajaremos estos análisis visuales es de la mano de `ggplot2`, así como con otros paquetes que ayudan a procesar esta información. Si bien existen otros métodos de graficar en R y otros programas, la preferencia de este taller es utilizar el sistema de procesamiento que ofrece `tidyverse`, con `ggplot2` incluido.
+
+Esta es una secuencia de tres semanas, y en esta lección continuamos con lo aprendido la semana anterior, donde terminamos con visualizaciones sencillas y con el uso de `tidyverse` para manejar datos. Tenemos la meta hoy de que al culminar las segundas dos horas de esta secuencia podamos:
+
+1.  Entender cómo usar la gramática de gráficas
+
+2.  Entender cómo usar `ggplot2`, continuando con lo aprendido de `tidyverse` de la semana pasada.
+
+3.  Entender cómo utilizar en varias maneras `tidycensus` para generar mapas.
+
+En la próxima sesión, del 10 de octubre, entraremos más en *wrangling* de datos, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales, así como sus diagnósticos posteriores. 
+
+# ggplot2
+
+R ofrece varias opciones para graficar, siendo útiles las capacidades incluidas en su instalación básica. Además, existen paquetes como `grid`, que permite un control preciso de los elementos gráficos, y `lattice`, que facilita la creación de gráficos multivariados y en paneles o facetas. Sin embargo, en este taller (y en los libros de referencia usados y descritos arriba) se ha optado por usar `ggplot2`, ya que permite a los principiantes crear gráficos complejos y estéticos mediante una sintaxis intuitiva y fácil de recordar, dividiendo los gráficos en componentes básicos.
+
+`ggplot2` destaca por su uso de una [*g*]{.underline}*ramática de [g]{.underline}ráficos* – de donde vienen las primeras dos g – que simplifica el proceso de creación de gráficos. Al aprender unos pocos componentes esenciales de esta gramática, los usuarios pueden generar una amplia variedad de gráficos con facilidad. Además, su comportamiento por defecto está diseñado para producir resultados agradables y funcionales con código conciso y legible, lo que facilita su uso por principiantes. Como factor limitante está el que está diseñado para trabajar con tablas de formato *tidy* (con filas con observaciones y columnas conteniendo variables), pero un número sustancial de conjuntos de datos se trabajan en ese formato, o pueden convertirse a ese formato.
+
+## Componentes de un gráfico
+
+Hoy construiremos varios tipos de gráficos como los que vimos arriba, así como mapas informativos. Antes que todo eso, vale señalar que los gráficos se dividen en tres componentes principales. Usaré otro gráfico que creara en 2020 durante la pandemia del Coronavirus para ejemplificar estos componentes.
+
+![Datos para ejemplificar](Covid.png)
+
+-   **Datos**:
+    -   Estoy pasando al gráfico un conjunto de datos que corté sobre fatalidad de casos de COVID-19 hasta el 31 de julio de 2020 (los datos continúan hasta 2023).
+    -   Este es el componente de *datos* del gráfico.
+-   **Geometrías**:
+    -   El gráfico es uno de líneas, útil para varias series de tiempo. Este componente es una *geometría*. Otras geometrías posibles son gráficos de dispersión, histogramas, diagramas de barras, densidades suavizadas, y diagrama de cajas, entre otros.
+-   **Mapeo estético**:
+    -   El gráfico usa señales visuales para representar en el lienzo vacío con capas distintos tipos de información provista en el conjunto de datos:
+        -   Posiciones en el eje de x (tiempo)
+        -   Posiciones en el eje de y (tasas de mortandad observadas)
+        -   Color (asignado por país)
+    -   Cada línea representa la información de un país para una serie de fechas. Estos se aclaran con una etiqueta para aclararnos esa relación de línea-color-país.
+    -   El *mapeo estético* depende de la geometría utilizada.
+-   **Observaciones adicionales**:\
+    -   Ejes *x* e *y* definidos por el rango de los datos y ambos en escalas logarítmicas.
+    -   El gráfico incluye etiquetas, un título, etiquetas de variables, nota al calce, y el tema utilizado es uno solarizado que pareciera no muy distante al utilizado por el periódico especializado "The Financial Times".
+-   Volveremos luego a estos datos para construir esta imagen si nos da tiempo en el taller, y si no, tendrán disponible el cómo hacerlo para referencia.
+
+## Lienzo vacío y capas
+
+Manteniéndonos cerca de los datos utilizados en la semana pasada, construiremos por ***capas*** la información que va en el gráfico.
+
+```{r Un lienzo en blanco}
+murders |> ggplot()
+```
+
+El primer paso de crear un gráfico de ggplot es asignar los datos a un lienzo vacío. Esto no significa poblar el lienzo con esos datos, sino pasarle al programa la información inicial, como un pintor que selecciona el tema que usará para la pintura que visualiza en su mente. Esto lo hicimos al pasar el *pipe* (`|>` o `|>`) los datos a ggplot, y lo que ocurrió fue que al no darle más información (capas, como la pintura en un lienzo), nos quedó un recuadro gris enmarcado por un borde blanco.
+
+En ggplot, la información entonces se suministra al lienzo por capas, y se le pueden añadir adicionales. Esto tomará la forma de código siguiente:
+
+| DATOS \|\> ggplot() + CAPA 1 + 
+| CAPA 2 + ... + CAPA N
+
+Usualmente, la primera capa que añadimos define la geometría. Si queremos hacer un diagrama de dispersión, ¿qué geometría deberíamos utilizar?
+
+Si vemos la hoja de referencia (en la carpeta del taller 2, o accesible en esta página: <https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf>), vemos que la función utilizada para crear gráficos con esta geometría puntillista es `geom_point`.
+
+```{r Añadiendo una geometría}
+murders |>
+  ggplot() +
+  geom_point(aes(x = population/10^6, y = total))
+
+```
+
+En este caso ya hemos dado un paso adicional y añadido una primera capa en esta obra: le indicamos que queremos una capa que tenga una geometría de puntos, y un mapeo estético que toma las coordenadas en un plano cartesiano donde el eje de equis queda definido como `population/10^6`, la población de los estados o Wáshington D.C., en millones; el eje de ye queda definido entonces como el total de asesinatos con armas de fuego. En el mapeo estético entonces los puntos quedan asignados a esas coordenadas. De esta manera, las distancias entre puntos, así como otras características que queramos añadir, quedan expresadas. Esto se da a través de la función `aes`. Esta será de las funciones que más usen al graficar.
+
+Noten que hasta ahora hemos trabajado este lienzo sin guardarlo como objeto. Si bien esto puede funcionar bien, es posible que queramos guardar nuestro progreso y seguir añadiendo capas adicionales. En este caso, al ejecutar el comando y guardarlo en objeto, el programa no nos dará automáticamente una actualización del gráfico; tendremos que llamar al objeto para que aparezca:
+
+```{r}
+p<-murders |>
+  ggplot() +
+  geom_point(aes(x = population/10^6, y = total),size=2)
+
+p
+```
+
+Tenemos entonces nuestro gráfico de dispersión inicial. Quizás no es tan informativo pero vemos una serie de puntos con el mapeo estético inicial. Noten que podríamos quitar la `x=` y la `y=` y no pasaría nada, ya que en ausencia de esta especificación, el programa entiende por defecto que lo primero que se le asigna es la información del eje horizontal, y en segundo orden el vertical:
+
+```{r Añadiendo etiquetas}
+p+
+  geom_text(aes(population/10^6, total, label = abb))
+```
+
+Aquí he añadido una geometría nueva: texto. Hay dos geometrías para esto, `geom_label` y `geom_text`, uno con el texto enmarcado en un recuadro y el segundo sin ello. Ya que cada punto (cada jurisdicción que es realmente parte de los Estados Unidos de América en este caso) tiene una etiqueta, necesitamos un mapeo estético para hacer la conexión entre los puntos y las etiquetas, así que se le asignó el mismo tal que el texto cayera exactamente en la misma coordenada que el punto. Pero esto se puede corregir:
+
+```{r Empujando etiquetas en el eje}
+p+
+  geom_text(aes(population/10^6, total, label = abb),nudge_x = 1.5) 
+#nudge_y desplazaría el texto en el eje de y
+```
+
+En este caso hemos empujado a través del eje de equis la etiqueta de texto con un valor numérico de 1.5. Valores mayores aumentarían la distancia del texto y el punto, mientras que menores harían lo contrario.
+
+Ahora podremos seguir con una complicación en el mapeo estético: queremos añadir una capa de color al lienzo que represente regiones de estas jurisdicciones. Esto se hace al añadir la opción de `colour` y dándole una variable, en este caso `region`.
+
+```{r Añadiendo color}
+# Crear el gráfico base con puntos coloreados por región
+p <- murders |>
+  ggplot() +
+  geom_point(aes(x = population/10^6, y = total, colour = region), size = 2)
+
+# Mostrar el gráfico
+p
+```
+
+Ahora paso nuevamente a añadir etiquetas abreviadas, con el color por región.
+
+```{r Añadiendo nuevamente etiquetas de abreviación jurisdiccional}
+# Añadir etiquetas desplazadas en el eje x (con color por región)
+p<-p + 
+  geom_text(aes(x = population/10^6, y = total, label = abb, colour = region), nudge_x = 1.5)
+p
+```
+
+Y para darle más información al gráfico le añadimos etiquetas y títulos que sean más informativas que los nombres de variables.
+
+```{r Añadiendo títulos}
+#démosle más información a la gráfica de dispersión.
+
+p+labs(
+  x = "Población (en millones)",   # Cambia el nombre del eje x
+  y = "Homicidios con arma de fuego",            # Cambia el nombre del eje y
+  colour = "Región",              # Cambia el nombre de la leyenda de color
+  title = "Homicidios con arma de fuego en EEUU, 2010"  # Título del gráfico
+)
+```
+
+Hasta ahora hemos ido añadiendo capas pero notamos que tenemos una gran concentración de puntos en la parte inferior izquierda del lienzo: la mayoría de las jurisdicciones tienen menos de 10 millones de habitantes y menos de 400 homicidios. Esto hace leer e interpretar lo que sucede en para estos casos difícil. Podríamos entonces representar el gráfico con una transformación logarítmica al re-escalar con `scale_x_continuous` y `scale_y_continuous`:
+
+```{r Haciendo una transformación de escala}
+p2<-murders |>
+  ggplot() +
+  geom_point(aes(x = population/10^6, y = total, colour = region), size = 3)
+p2<- p2 + geom_text(aes(x = population/10^6, y = total, label = abb),nudge_x = 0.05)
+p2<-p2+scale_x_continuous(trans = "log10")+
+  scale_y_continuous(transform = "log10")
+p2<-p2+
+  labs(
+    x = "Población (millones, escala log.)",   # Cambia el nombre del eje x
+    y = "Homicidios por arma de fuego (escala log.)",            # Cambia el nombre del eje y
+    colour = "Región",              # Cambia el nombre de la leyenda de color
+    title = "Homicidios por arma de fuego vs población, por región"  # Título del gráfico
+  )
+p2
+```
+
+Podríamos añadir una capa temática, usando el paquete `ggthemes`, que tiene un catálogo estético variado, que recomiendo verifiquen a través de <https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/>. Esto es en adición a los que ya ofrece el paquete de `ggplot2` <https://ggplot2.tidyverse.org/reference/ggtheme.html>.
+
+En este caso le añadiré una visualización al estilo del semanario británico *The Economist.*
+
+```{r Añadiendo temas}
+library(ggthemes)
+p2 + theme_economist()
+```
+
+## El gráfico que buscábamos
+
+Normalmente queremos añadir formas o anotaciones a las figuras que no se derivan directamente del mapeo estético; algunos ejemplos incluyen etiquetas, cuadros, áreas sombreadas y líneas. Si queremos añadir una línea que represente la tasa promedio de asesinatos en todos los Estados Unidos, tendremos que determinarlo aparte con la ayuda de `dplyr` (parte de `tidyverse`), y tendremos que hacer la transformación adecuada también (logarítmica):
+
+```{r el gráfico que buscábamos (datos de asesinatos)}
+library(ggthemes)
+library(ggrepel)
+library(dslabs)
+t <- murders |> 
+  summarise(tasa = sum(total) /  sum(population) * 10^6) |>
+  pull(tasa)
+
+murders |> 
+  mutate(región=case_when(
+    region == "Northeast" ~ "Noreste",
+    region == "North Central" ~ "el Midwest",
+    region == "West" ~ "Oeste",
+    region == "South" ~ "el Sur"))|>
+  ggplot(aes(population/10^6, total)) +   
+  geom_abline(intercept = log10(t), lty = 2, color = "darkgrey") +
+  geom_point(aes(col = región), size = 3) +
+  geom_text_repel(aes(label = abb)) + 
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "Homicidios en EEUU con arma de fuego en 2010",
+       x = "Población (en millones, escala log.)", 
+       y = "Homicidios por arma de fuego (en escala log.)",
+       color = "Región") +
+  theme_linedraw()
+```
+
+He aquí los pasos entonces que necesitábamos para recrear la imagen arriba.'
+
+## Gráficos rápidos: `qplot()`
+
+Si bien esto ha sido útil y han podido ver cómo generar gráficas complejas siguiendo la gramática de gráficos, es probable que en algún momento quieran ver rápidamente unas relaciones visuales de manera instantánea, con la intención luego de volver y darle mejor forma y seguir las complicaciones de un gráfico de `ggplot2` con todas sus capas. La opción que da `ggplot2` a esto es el uso de `qplot()`.
+
+Por ejemplo, aquí modifiqué los grupos de jurisdicciones de Estados Unidos a unos grupos específicos, y creo un gráfico para ver densidades con relleno (`fill=grupo`) y con líneas que también sirven para demarcar estos grupos de manera distinta (e.g. línea sólida, línea entrecortada). Noten que ha corrido todo el gráfico de la última línea.
+
+```{r Un qplot inicial}
+murdersg<-murders |>
+  mutate(tasa= total/population *10^5,
+    ,grupo = case_when(
+    abb %in% c("ME", "NH", "VT", "MA", "RI", "CT") ~ "Nueva Inglaterra",
+    abb %in% c("WA", "OR", "CA") ~ "Costa del Pacífico",
+    region == "South" ~ "el Sur",
+    TRUE ~ "Otras regiones"))
+qplot(tasa, data = murdersg, geom= "density", fill = grupo, linetype=grupo)
+```
+
+En las siguientes líneas pido y ejecuto variaciones de gráficos con qplot con los datos de altura del libro de Irizarry:
+
+```{r Varios qplots}
+data(heights)            
+b<-heights|>ggplot()
+qplot(sex, height, data = heights, geom= "boxplot", fill = sex)
+qplot(sex, height, data = heights, geom= "violin", fill = sex)
+qplot(sex, height, data = heights, geom = "dotplot",
+      stackdir = "center", binaxis = "y", dotsize = 0.3)
+qplot(height, data = heights, geom = "density", fill = sex)
+qplot(height, data = heights, geom = "density", color = sex, linetype = sex)
+```
+
+Nuevamente podríamos mostrar información adicional, como medias añadidas fuera de las estéticas definidas dentro del mapeo:
+
+```{r Dando a densidades transparencias}
+mu_alt<-heights |>
+  group_by(sex) |>
+  summarise(media=mean(height))
+
+c<-heights|>ggplot(aes(x = height))
+c+geom_density(aes(fill = sex), alpha=0.4) #el alpha le da un nivel de transparencia 
+#¿qué creen que pase si suben el valor a 0.9 o lo reducen a 0.1?
+```
+
+Noten que si tenemos dos categorías, al pedir color, tiende a establecer a uno con un rojo magenta y al segundo con un azul cian (aciano o ciano), en este caso suavizado y transparentado para poder ver las distribuciones. Sin embargo, podemos editar el color manualmente, a la vez que añadimos complicaciones como una media de alturas por grupo.
+
+```{r Añadiendo color manualmente}
+c+ geom_density(aes(color = sex)) +
+  geom_vline(data=mu_alt, aes(xintercept=media, color=sex),
+             linetype="dashed") +
+  scale_color_manual(values=c("#999999", "#E69F00")) #noten que aquí le di los colores con código alfanumérico, un gris plateado y un dorado.
+```
+
+Hay varios métodos para asignar colores al nombrarlos en R. Se puede hacer por nombre (en inglés), con códigos alfanúmericos, y se puede también importar paletas de colores con paquetes específicos. Considero útil revisar las opciones en este enlace: <https://r-graph-gallery.com/ggplot2-color.html>
+
+## Alcanzando visualización de densidades y sus cambios a través del tiempo
+
+```{r}
+library(dslabs)
+data(gapminder)
+gapminder |> as_tibble()
+```
+
+Vemos que estos datos incluyen una variedad de información a nivel de país, que incluye un número de años para ellos.
+
+Podemos ver los grupos de países por continentes usando una matriz de gráficos, con cuadrículas paradas y acostadas:
+
+```{r}
+filter(gapminder, year%in%c(1962, 2012)) |>
+  ggplot(aes(fertility, life_expectancy, colour = continent)) +
+  geom_point() +
+  facet_grid(continent~year)
+
+filter(gapminder, year%in%c(1962, 2012)) |>
+  ggplot(aes(fertility, life_expectancy, col = continent)) +
+  geom_point() +
+  facet_grid(. ~ year)
+
+years <- c(1962, 1980, 1990, 2000, 2012,2015)
+continents <- c("Europe", "Asia")
+gapminder |>
+  filter(year %in% years & continent %in% continents) |>
+  ggplot( aes(fertility, life_expectancy, colour = continent)) +
+  geom_point() +
+  facet_wrap(~year)+labs(x="Fertilidad", y="Esperanza de vida",colour="Continente")
+```
+
+En este caso podemos apreciar mejor cómo la dispersión y distribución de países entre los años 1960s y el presente reciente ha ido encaminado a una convergencia en estándares de vida, dejando atrás los puntos donde originaron estereotipos que aún persisten sobre cómo son las vidas y experiencias de distintas regiones del planeta (sin desestimar diferencias e inequidades presentes).
+
+```{r Creando visualización sobre ingresos diarios}
+gapminder <- gapminder |> mutate(dólares_diarios = gdp/population/365)
+
+antaño <- 1970
+
+gapminder |>
+  filter(year == antaño & !is.na(gdp)) |>
+  mutate(region = reorder(region, dólares_diarios, FUN = median)) |>
+  ggplot(aes(dólares_diarios, region)) +
+  geom_point() +
+  scale_x_continuous(trans = "log2")
+```
+
+```{r Creando categorías para ver mejor dinámicas}
+gapminder <- gapminder |>
+  mutate(grupo = case_when(
+    region %in% c("Western Europe", "Northern Europe","Southern Europe",
+                  "Northern America",
+                  "Australia and New Zealand") ~ "Occidente",
+    region %in% c("Eastern Asia", "South-Eastern Asia") ~ "Asia oriental",
+    region %in% c("Caribbean", "Central America",
+                  "South America") ~ "Latinoamérica",
+    continent == "Africa" &
+      region != "Northern Africa" ~ "África subsahariana",
+    TRUE ~ "Otros"))
+#le damos orden a los niveles
+gapminder <- gapminder |>
+  mutate(grupo = factor(grupo, levels = c("Otros", "Latinoamérica",
+                                          "Asia oriental", "África subsahariana",
+                                          "Occidente")))
+
+p <- gapminder |>
+  filter(year == antaño & !is.na(gdp)) |>
+  ggplot(aes(grupo, dólares_diarios)) +
+  geom_boxplot() +
+  scale_y_continuous(trans = "log2") +
+  xlab("") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p
+p + geom_point(alpha = 0.5) #añadiendo puntos para ver mejor distribuciones y cantidad de casos
+```
+
+```{r Densidades}
+library(ggridges)
+p <- gapminder |>
+  filter(year == antaño & !is.na(dólares_diarios)) |>
+  ggplot(aes(dólares_diarios, grupo)) +
+  scale_x_continuous(trans = "log2")
+p + geom_density_ridges()
+```
+
+```{r Densidades con información de observaciones}
+p + geom_density_ridges(jittered_points = TRUE,
+                        position = position_points_jitter(height = 0),
+                        point_shape = '|', point_size = 3,
+                        point_alpha = 1, alpha = 0.7) 
+```
+
+```{r Histogramas comparativos en facetas}
+antaño <- 1970
+año_presente <- 2010
+
+years <- c(antaño, año_presente)
+gapminder |>
+  filter(year %in% years & !is.na(gdp)) |>
+  mutate(west = ifelse(grupo == "Occidente", "Occidente", "El Resto")) |>
+  ggplot(aes(dólares_diarios)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous(trans = "log2") +
+  facet_grid(year ~ west)
+```
+
+Sabemos que muchos países surgieron después de 1970 (razón por la cual el histograma se nutre para el grupo **El Resto**), así que para comparar los países que tienen toda la información y han existido consistentemente entre esos periodos y ver si hay cambios y de dónde surgen en distribuciones podemos hacer lo siguiente:
+
+```{r Wrangling para comparar chinas con chinas}
+country_list_1 <- gapminder |>
+  filter(year == antaño & !is.na(dólares_diarios)) |>
+  pull(country)
+
+country_list_2 <- gapminder |>
+  filter(year == año_presente & !is.na(dólares_diarios)) |>
+  pull(country)
+
+country_list <- intersect(country_list_1, country_list_2)
+
+gapminder |>
+  filter(year %in% years & country %in% country_list) |>
+  ggplot(aes(grupo, dólares_diarios)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_continuous(trans = "log2") +
+  xlab("") +
+  facet_grid(. ~ year)
+
+gapminder |>
+  filter(year %in% years & !is.na(dólares_diarios)) |>
+  ggplot(aes(dólares_diarios, grupo)) +
+  scale_x_continuous(trans = "log2") +
+  geom_density_ridges(adjust = 1.5) +
+  facet_grid(. ~ year)
+
+gapminder |>
+  filter(year %in% years & country %in% country_list) |>
+  group_by(year) |>
+  mutate(weight = population/sum(population)*2) |>
+  ungroup() |>
+  ggplot(aes(dólares_diarios, fill = grupo)) +
+  scale_x_continuous(trans = "log2", limit = c(0.125, 300)) +
+  geom_density(alpha = 0.2, bw = 0.75, position = "stack") +
+  facet_grid(year ~ .)+labs(title = "Densidades apiladas: ingreso en dólares por día per cápita entre 1970 y 2010",
+         x = "Dólares por día", 
+         y = "Densidad",
+         color = "Regiones")
+
+```
+
+
+# Recapitulando
+
+## Qué aprendimos en este taller inicial
+
+Hoy aprendimos varias cosas para empezar a usar R:
+
+-   Hablamos sobre cómo descargar e instalar R y RStudio;
+-   Funcionalidades posibles, como Markdown;
+-   Funciones y jerga específica de R;
+-   Cómo cargar datos y visualizarlos;
+-   Cómo buscar estadísticas básicas;
+-   Cómo llevar a cabo operaciones transformadoras a los datos;
+-   Empezamos a usar la sintaxis de tidyverse.
+
+## Continuamos el próximo martes
+
+En el siguiente taller talleres que vienen continuaremos ahondando en operaciones estadísticas, visualización más avanzada, estadística inferencial y análisis de redes. Gracias por asistir hoy.
