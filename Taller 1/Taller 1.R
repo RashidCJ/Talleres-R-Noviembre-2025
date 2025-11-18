@@ -1,5 +1,6 @@
 # ============================================================
 # Taller: Introducción a la computación estadística en R
+# Introducción y primeros pasos con tidyverse
 # Fecha: 13 de noviembre de 2025
 # Autor: Rashid C. J. Marcano Rivera, Ph.D., M.S., M.A.
 # Propósito: Archivo anotado para participantes del taller
