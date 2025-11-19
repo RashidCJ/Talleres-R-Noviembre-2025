@@ -1,10 +1,13 @@
 ---
 title: "CACCS: Taller de RStudio - 1ª parte"
 author: "Rashid C.J. Marcano Rivera, Ph.D., M.S., M.A."
-date: "13 de nov.ᵉ de 2025"
+date: 2025-11-13
+#date-format: "iso"
+lang: es
 
 format:
   html:
+    self-contained: true
     theme: cerulean
     toc: true
     toc-location: left
